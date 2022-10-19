@@ -4,6 +4,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.db.models import Sum
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
 
 from main_app.models import Food
 # Define the home view
@@ -31,8 +32,8 @@ def api(request):
         return render(request, 'api.html', {'query': 'Enter a valid query'})
 
 def foods_index(request):
-  foods=Food.objects.all()
-  data = Food.objects.aggregate(
+  foods=Food.objects.filter(user=request.user)
+  data = Food.objects.filter(user=request.user).aggregate(
     Sum('calories'), 
     Sum('protein'), 
     Sum('carbohydrates'), 
