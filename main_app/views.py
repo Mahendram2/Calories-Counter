@@ -1,8 +1,6 @@
 from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views.generic import ListView
 from django.db.models import Sum
-from .forms import FoodForm
 
 from main_app.models import Food
 # Define the home view
@@ -10,8 +8,13 @@ def home(request):
   return render(request,'home.html')
 
 def about(request):
-  return render(request, 'about.html')
-
+  data = Food.objects.aggregate(
+    Sum('calories'), 
+    Sum('protein'), 
+    Sum('carbohydrates'), 
+    Sum('fat'), 
+    Sum('fiber'))
+  return render(request, 'about.html', {'data':data})
 # PNH8MnUSvxfXfIl2BJ9czQ==KxF5yVwD8rPHe16v
 def api(request):
   import json
@@ -26,8 +29,12 @@ def api(request):
 
 def foods_index(request):
   foods=Food.objects.all()
-  data = Food.objects.aggregate(Sum('calories'), Sum('protein'), Sum('carbohydrates'), Sum('fat'), Sum('fiber'))
-  
+  data = Food.objects.aggregate(
+    Sum('calories'), 
+    Sum('protein'), 
+    Sum('carbohydrates'), 
+    Sum('fat'), 
+    Sum('fiber'))
   return render(request, 'foods/index.html', {'foods':foods, 'data':data})
 
 def foods_detail(request, food_id):
