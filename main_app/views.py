@@ -5,6 +5,7 @@ from django.db.models import Sum
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from main_app.models import Food
 # Define the home view
@@ -31,6 +32,7 @@ def api(request):
   else:
         return render(request, 'api.html', {'query': 'Enter a valid query'})
 
+@login_required
 def foods_index(request):
   foods=Food.objects.filter(user=request.user)
   data = Food.objects.filter(user=request.user).aggregate(
@@ -41,6 +43,7 @@ def foods_index(request):
     Sum('fiber'))
   return render(request, 'foods/index.html', {'foods':foods, 'data':data})
 
+@login_required
 def foods_detail(request, food_id):
   food=Food.objects.get(id=food_id)
   return render(request, 'foods/detail.html', {'food':food})
@@ -59,7 +62,8 @@ def signup(request):
   context = {'form': form, 'error_message': error_message}
   return render(request, 'registration/signup.html', context)
 
-class FoodsCreate(CreateView):
+
+class FoodsCreate(LoginRequiredMixin, CreateView):
   model = Food
   fields=('name', 'calories','carbohydrates', 'protein', 'fat' , 'fiber')
   success_url = '/foods/'
@@ -68,12 +72,14 @@ class FoodsCreate(CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
-class FoodsUpdate(UpdateView):
+
+class FoodsUpdate(LoginRequiredMixin, UpdateView):
   model = Food
   fields = ('name', 'calories','carbohydrates', 'protein', 'fat' , 'fiber')
   success_url = '/foods/'
 
-class FoodsDelete(DeleteView):
+
+class FoodsDelete(LoginRequiredMixin, DeleteView):
   model = Food
   success_url = '/foods/'
 
