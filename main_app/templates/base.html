@@ -24,16 +24,20 @@
         <div class="nav-wrapper green lighten-3">
           <ul>
             <li>
-              <a href="/" class="left brand-logo">Calories Counter</a>
+              <a href="{% url 'home'%}" class="left brand-logo">Calories Counter</a>
             </li>
           </ul>
           <ul class="right">
-            <li><a href="/about">About</a></li>
-            <li><a href="/foods">Food Log</a></li>
-            <li><a href="/foods/create">Add Food</a></li>
-            <li><a href="/foods/">Signup</a></li>
-            <li><a href="/foods/">Login</a></li>
-            <li><a href="/foods/">Logout</a></li>
+            <li><a href="{% url 'about' %}">About</a></li>
+            {% if user.is_authenticated %}
+            <li><a href="{% url 'foods_index' %}">Food Log</a></li>
+            <li><a href="{% url 'api' %}">Food Look Up</a></li>
+            <li><a href="{% url 'foods_create' %}">Add Food</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+            {% else %}
+            <li><a href="{% url 'login' %}">Login</a></li>
+            <li><a href="{% url 'signup' %}">Signup</a></li>
+            {% endif %}
           </ul>
         </div>
       </nav>
@@ -41,7 +45,7 @@
     <main class="container ">{% block content %} {% endblock %}</main>
     <footer class="page-footer green lighten-3">
       <div class="mid center">
-        All Rights Reserved | © 2022 Calories Counter  
+      Created by <a href="https://www.linkedin.com/in/mahendra-mishra-85b351222/" target="_blank">Mahendra </a> | All Rights Reserved | © 2022 Calories Counter  
       </div>
     </footer>
   </body>
